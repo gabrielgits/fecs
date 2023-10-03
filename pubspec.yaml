@@ -1,0 +1,19 @@
+name: fecs
+description: Flutter External Cloud Service.
+version: 0.1.0
+homepage: https://github.com/gabrielgits/fecs.git
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cloud_firestore: ^4.9.3
+  firebase_auth: ^4.10.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
