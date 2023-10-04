@@ -1,7 +1,4 @@
 library fecs;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'src/infra/fecs_data.dart';
+export 'src/external/fecs_data_firebase.dart';
