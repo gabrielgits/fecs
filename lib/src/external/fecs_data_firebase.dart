@@ -44,6 +44,7 @@ class FecsDataFirebase implements FecsData {
 
       final User? firebaseUser = userCredential.user;
 
+      user.remove('password');
       if (firebaseUser != null) {
         await _firestore.collection('users').doc(firebaseUser.uid).set(user);
         return {'user': user};
@@ -170,25 +171,33 @@ class FecsDataFirebase implements FecsData {
       rethrow;
     }
   }
-  
+
   @override
-  Future<Map<String, dynamic>> search({required String table, required String criteria}) async {
+  Future<Map<String, dynamic>> search(
+      {required String table, required String criteria}) async {
     try {
-      final value = await _firestore.collection(table).where(criteria, isEqualTo: true).get();
+      final value = await _firestore
+          .collection(table)
+          .where(criteria, isEqualTo: true)
+          .get();
       return {table: value};
     } catch (e) {
       rethrow;
     }
-    
   }
-  
+
   @override
-  Future<Map<String, dynamic>> searchAll({required String table, required String criteria, List<Object?>? criteriaListData}) async {
+  Future<Map<String, dynamic>> searchAll(
+      {required String table,
+      required String criteria,
+      List<Object?>? criteriaListData}) async {
     try {
-      final values = await _firestore.collection(table).where(criteria, isEqualTo: true).get();
+      final values = await _firestore
+          .collection(table)
+          .where(criteria, isEqualTo: true)
+          .get();
       return {table: values};
-    }
-    catch (e) {
+    } catch (e) {
       rethrow;
     }
   }
