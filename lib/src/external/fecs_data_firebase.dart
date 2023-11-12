@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../infra/fecs_data.dart';
+import '../fecs_data.dart';
 
 class FecsDataFirebase implements FecsData {
   final FirebaseAuth _auth = FirebaseAuth.instance;
