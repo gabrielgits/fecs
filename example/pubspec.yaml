@@ -37,7 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   fecs:
     path: ../
-  firebase_core: ^2.20.0
+  firebase_core: ^2.24.2
 
 dev_dependencies:
   flutter_test:
