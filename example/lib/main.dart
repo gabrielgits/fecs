@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fecs/fecs.dart';
 
-import 'firebase_options.dart';
+//import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+      //options: DefaultFirebaseOptions.currentPlatform,
+      );
   runApp(const MyApp());
 }
 
@@ -67,6 +67,14 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future<void> _signInWithGoogle() async {
+    FecsData cloudService = FecsDataFirebase();
+    final data = await cloudService.signupWithEmailGoogle();
+    setState(() {
+      _userData = ('login: $data');
+    });
+  }
+
   late String id;
 
   // generate ramdom number
@@ -99,16 +107,24 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      bottomNavigationBar: Column(
         children: [
-          ElevatedButton(
-            onPressed: () => _registerUser(id),
-            child: const Text('Register'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                onPressed: () => _registerUser(id),
+                child: const Text('Register'),
+              ),
+              ElevatedButton(
+                onPressed: () => _registerLogin(id),
+                child: const Text('Login'),
+              ),
+            ],
           ),
           ElevatedButton(
-            onPressed: () => _registerLogin(id),
-            child: const Text('Login'),
+            onPressed: () => _signInWithGoogle(),
+            child: const Text('Sign in with Google'),
           ),
         ],
       ),

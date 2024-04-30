@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../fecs_data.dart';
 
@@ -199,6 +200,51 @@ class FecsDataFirebase implements FecsData {
       return {table: values};
     } catch (e) {
       rethrow;
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> signupWithEmailGoogle() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+
+    final GoogleSignInAccount? googleSignInAccount =
+        await googleSignIn.signIn();
+
+    if (googleSignInAccount != null) {
+      try {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+
+        final User userDetails =
+            (await _auth.signInWithCredential(credential)).user!;
+        // return userDetails as Map<String, dynamic>;
+        return {
+          'id': 1,
+          'number': userDetails.uid,
+          'name': userDetails.displayName,
+          'email': userDetails.email,
+          'picture': userDetails.photoURL,
+          'type': 2, // 1 for phone, 2 for google, 3 for facebook
+        };
+      } on FirebaseAuthException catch (e) {
+        switch (e.code) {
+          case "account-exists-with-different-credential":
+            throw Exception(
+              "You already have an account with us. Use correct provider",
+            );
+
+          case "null":
+            throw Exception("Some unexpected error while trying to sign in");
+          default:
+            throw Exception(e.toString());
+        }
+      }
+    } else {
+      throw Exception('Sign up with google failed');
     }
   }
 }

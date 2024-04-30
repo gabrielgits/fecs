@@ -4,6 +4,7 @@ abstract class FecsData {
     required String password,
   });
   Future<Map<String, dynamic>> signupWithEmail(Map<String, dynamic> user);
+  Future<Map<String, dynamic>> signupWithEmailGoogle();
   Future<bool> logout();
   Future<bool> recoveryPassword(String email);
   Future<bool> confirmPasswordReset(
