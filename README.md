@@ -17,17 +17,92 @@ implementation:
 
 ## Getting started
 
-2. To use this package, add inani as dependency in your `pubspec.yaml` file:
+1. To use this package, add inani as dependency in your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
    fecs:
 ```
 
-3. Import the package into your dart file:
+
+2. Import the package into your dart file:
 
 ```dart
 import 'package:fecs/fecs.dart';
+```
+
+
+3. Add this depedencies to : /android/app/build.gradle
+
+```java
+plugins {
+    ...
+    
+    id 'com.google.gms.google-services'
+}
+
+...
+
+dependencies {
+  ...
+
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:32.8.0')
+    implementation 'com.google.firebase:firebase-analytics'
+
+    // Add the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-auth'
+
+    // Also add the dependency for the Google Play services library and specify its version
+    implementation 'com.google.android.gms:play-services-auth:21.0.0'
+}
+```
+
+4. Add this depedencies to : /android/build.gradle
+
+```java
+buildscript {
+    ...
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        ...
+        classpath "com.google.gms:google-services:4.3.15"
+    }
+}
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+```
+
+
+4. Add this depedencies to : /android/settings.gradle
+
+```java
+pluginManagement {
+  ...
+
+  repositories {
+    google()
+    mavenCentral()
+    gradlePluginPortal()
+  }
+
+  ...
+}
+plugins {
+    ...
+    // START: FlutterFire Configuration
+    id "com.google.gms.google-services" version "4.3.15" apply false
+    // END: FlutterFire Configuration
+}
 ```
 
 

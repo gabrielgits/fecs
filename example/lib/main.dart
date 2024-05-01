@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fecs/fecs.dart';
 
-//import 'firebase_options.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-      //options: DefaultFirebaseOptions.currentPlatform,
-      );
+    //name: 'tchissola-1c2d0',
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -40,6 +41,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String image = 'https://picsum.photos/200';
   String _userData = 'no login';
 
   Future<void> _registerUser(String id) async {
@@ -67,11 +69,22 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future<void> _logout() async {
+    FecsData cloudService = FecsDataFirebase();
+    //final user = {'email': 'gabriel@email.com', 'password': '123456'};
+    await cloudService.logout();
+    setState(() {
+      image = 'https://picsum.photos/200';
+      _userData = 'no login';
+    });
+  }
+
   Future<void> _signInWithGoogle() async {
     FecsData cloudService = FecsDataFirebase();
     final data = await cloudService.signupWithEmailGoogle();
     setState(() {
       _userData = ('login: $data');
+      image = data['picture'];
     });
   }
 
@@ -91,42 +104,53 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title + id),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              _userData,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title + id),
         ),
-      ),
-      bottomNavigationBar: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                onPressed: () => _registerUser(id),
-                child: const Text('Register'),
-              ),
-              ElevatedButton(
-                onPressed: () => _registerLogin(id),
-                child: const Text('Login'),
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.network(image, width: 200),
+              const SizedBox(height: 20),
+              Text(
+                _userData,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
             ],
           ),
-          ElevatedButton(
-            onPressed: () => _signInWithGoogle(),
-            child: const Text('Sign in with Google'),
+        ),
+        bottomNavigationBar: SizedBox(
+          height: 200,
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => _registerUser(id),
+                    child: const Text('Register'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => _registerLogin(id),
+                    child: const Text('Login'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => _registerLogin(id),
+                    child: const Text('Logout'),
+                  ),
+                ],
+              ),
+              ElevatedButton(
+                onPressed: () => _signInWithGoogle(),
+                child: const Text('Sign in with Google'),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
