@@ -4,6 +4,11 @@ abstract class FecsData {
     required String password,
   });
   Future<Map<String, dynamic>> signupWithEmail(Map<String, dynamic> user);
+  Future<void> signupWithPhone(String phoneNumber,
+      {required String Function() onCodeSent,
+      required void Function(Map<String, dynamic> user) onVerificationCompleted,
+      required void Function(Exception exception) onVerificationFailed,
+      required void Function(String verification) onCodeAutoRetrievalTimeout});
   Future<Map<String, dynamic>> signupWithEmailGoogle();
   Future<bool> logout();
   Future<bool> recoveryPassword(String email);

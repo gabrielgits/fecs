@@ -228,7 +228,8 @@ class FecsDataFirebase implements FecsData {
           'name': userDetails.displayName,
           'email': userDetails.email,
           'picture': userDetails.photoURL,
-          'type': 2, // 1 for phone, 2 for google, 3 for facebook
+          'type':
+              2, // 1 for phone, 2 for google, 3 for facebook, 0 for anoymous
         };
       } on FirebaseAuthException catch (e) {
         switch (e.code) {
@@ -246,5 +247,40 @@ class FecsDataFirebase implements FecsData {
     } else {
       throw Exception('Sign up with google failed');
     }
+  }
+
+  @override
+  Future<void> signupWithPhone(String phoneNumber,
+      {required String Function() onCodeSent,
+      required void Function(Map<String, dynamic> user) onVerificationCompleted,
+      required void Function(Exception exception) onVerificationFailed,
+      required void Function(String verification)
+          onCodeAutoRetrievalTimeout}) async {
+    await _auth.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      codeSent: (verificationId, forceResendingToken) async {
+        final code = onCodeSent();
+        final credential = PhoneAuthProvider.credential(
+            verificationId: verificationId, smsCode: code);
+        await _auth.signInWithCredential(credential);
+      },
+      verificationFailed: (exception) => onVerificationFailed(exception),
+      codeAutoRetrievalTimeout: (verification) =>
+          onCodeAutoRetrievalTimeout(verification),
+      verificationCompleted: (credential) async {
+        final User userDetails =
+            (await _auth.signInWithCredential(credential)).user!;
+        final userMap = {
+          'id': 1,
+          'number': userDetails.uid,
+          'name': userDetails.displayName,
+          'email': userDetails.email,
+          'picture': userDetails.photoURL,
+          'type':
+              1, // 1 for phone, 2 for google, 3 for facebook, 0 for anoymous
+        };
+        onVerificationCompleted(userMap);
+      },
+    );
   }
 }
