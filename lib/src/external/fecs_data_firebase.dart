@@ -251,7 +251,7 @@ class FecsDataFirebase implements FecsData {
 
   @override
   Future<void> signupWithPhone(String phoneNumber,
-      {required String Function() onCodeSent,
+      {required Future<String> Function() onCodeSent,
       required void Function(Map<String, dynamic> user) onVerificationCompleted,
       required void Function(Exception exception) onVerificationFailed,
       required void Function(String verification)
@@ -259,7 +259,7 @@ class FecsDataFirebase implements FecsData {
     await _auth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
       codeSent: (verificationId, forceResendingToken) async {
-        final code = onCodeSent();
+        final code = await onCodeSent();
         final credential = PhoneAuthProvider.credential(
             verificationId: verificationId, smsCode: code);
         await _auth.signInWithCredential(credential);

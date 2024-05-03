@@ -5,7 +5,7 @@ abstract class FecsData {
   });
   Future<Map<String, dynamic>> signupWithEmail(Map<String, dynamic> user);
   Future<void> signupWithPhone(String phoneNumber,
-      {required String Function() onCodeSent,
+      {required Future<String> Function() onCodeSent,
       required void Function(Map<String, dynamic> user) onVerificationCompleted,
       required void Function(Exception exception) onVerificationFailed,
       required void Function(String verification) onCodeAutoRetrievalTimeout});
