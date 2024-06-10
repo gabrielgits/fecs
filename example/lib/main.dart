@@ -103,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
     FecsData cloudService = FecsDataFirebase();
     await cloudService.signupWithPhone(
       phoneNumber,
-      onCodeSent: () {
+      onCodeSent: () async {
         return code;
       },
       onVerificationCompleted: (user) {

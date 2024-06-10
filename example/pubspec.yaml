@@ -37,7 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   fecs:
     path: ../
-  firebase_core: ^2.24.2
+  firebase_core: ^3.0.0
   google_sign_in: ^6.2.1
 
 dev_dependencies:
