@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _registerLogin(String id) async {
     FecsData cloudService = FecsDataFirebase();
     //final user = {'email': 'gabriel@email.com', 'password': '123456'};
-    final data = await cloudService.loginWithEmail(
+    final data = await cloudService.signinWithEmail(
       email: 'gabriel$id@email.com',
       password: '123456',
     );
@@ -81,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _signInWithGoogle() async {
     FecsData cloudService = FecsDataFirebase();
-    final data = await cloudService.signupWithEmailGoogle();
+    final data = await cloudService.signinWithGoogle();
     setState(() {
       _userData = ('login: $data');
       image = data['picture'];
@@ -101,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _signInWithPhone(
       String phoneNumber, BuildContext context) async {
     FecsData cloudService = FecsDataFirebase();
-    await cloudService.signupWithPhone(
+    await cloudService.signinWithPhone(
       phoneNumber,
       onCodeSent: () async {
         return code;

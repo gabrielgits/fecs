@@ -1,15 +1,15 @@
 abstract class FecsData {
-  Future<Map<String, dynamic>> loginWithEmail({
+  Future<Map<String, dynamic>> signinWithEmail({
     required String email,
     required String password,
   });
   Future<Map<String, dynamic>> signupWithEmail(Map<String, dynamic> user);
-  Future<void> signupWithPhone(String phoneNumber,
+  Future<void> signinWithPhone(String phoneNumber,
       {required Future<String> Function() onCodeSent,
       required void Function(Map<String, dynamic> user) onVerificationCompleted,
       required void Function(Exception exception) onVerificationFailed,
       required void Function(String verification) onCodeAutoRetrievalTimeout});
-  Future<Map<String, dynamic>> signupWithEmailGoogle();
+  Future<Map<String, dynamic>> signinWithGoogle();
   Future<bool> logout();
   Future<bool> recoveryPassword(String email);
   Future<bool> confirmPasswordReset(

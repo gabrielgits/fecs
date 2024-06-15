@@ -9,7 +9,7 @@ class FecsDataFirebase implements FecsData {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
-  Future<Map<String, dynamic>> loginWithEmail({
+  Future<Map<String, dynamic>> signinWithEmail({
     required String email,
     required String password,
   }) async {
@@ -21,15 +21,22 @@ class FecsDataFirebase implements FecsData {
       );
 
       final User? account = userCredential.user;
+      final data = <String, dynamic>{};
       if (account != null) {
         final value =
             await _firestore.collection('users').doc(account.uid).get();
-        return {'user': value.data()};
+        data['status'] = true;
+        data['data'] = value.data();
       } else {
-        throw Exception('Login failed');
+        data['status'] = false;
+        data['error'] = 'Login failed';
       }
+      return data;
     } catch (e) {
-      rethrow;
+      return {
+        'status': false,
+        'error': e.toString(),
+      };
     }
   }
 
@@ -46,16 +53,21 @@ class FecsDataFirebase implements FecsData {
       final User? firebaseUser = userCredential.user;
 
       user.remove('password');
+      final data = <String, dynamic>{};
       if (firebaseUser != null) {
         await _firestore.collection('users').doc(firebaseUser.uid).set(user);
-        return {'user': user};
+        data['status'] = true;
+        data['data'] = user;
       } else {
-        // Handle the case when the user is null (signup failed)
-        throw Exception('Signup failed');
+        data['status'] = false;
+        data['error'] = 'Signup failed';
       }
+      return data;
     } catch (e) {
-      // Handle signup errors
-      rethrow;
+      return {
+        'status': false,
+        'error': e.toString(),
+      };
     }
   }
 
@@ -143,9 +155,15 @@ class FecsDataFirebase implements FecsData {
       {required String id, required String table}) async {
     try {
       final value = await _firestore.collection(table).doc(id).get();
-      return {table: value.data()};
+      final data = <String, dynamic>{};
+      data['data'] = value.data();
+      data['status'] = true;
+      return data;
     } catch (e) {
-      rethrow;
+      return {
+        'status': false,
+        'error': e.toString(),
+      };
     }
   }
 
@@ -154,9 +172,15 @@ class FecsDataFirebase implements FecsData {
       {required String table, required Map<String, dynamic> body}) async {
     try {
       final value = await _firestore.collection(table).add(body);
-      return {table: value};
+      final data = <String, dynamic>{};
+      data['data'] = value;
+      data['status'] = true;
+      return data;
     } catch (e) {
-      rethrow;
+      return {
+        'status': false,
+        'error': e.toString(),
+      };
     }
   }
 
@@ -167,9 +191,15 @@ class FecsDataFirebase implements FecsData {
       required Map<String, dynamic> body}) async {
     try {
       await _firestore.collection(table).doc(id).update(body);
-      return {table: body};
+      final data = <String, dynamic>{};
+      data['data'] = body;
+      data['status'] = true;
+      return data;
     } catch (e) {
-      rethrow;
+      return {
+        'status': false,
+        'error': e.toString(),
+      };
     }
   }
 
@@ -181,9 +211,15 @@ class FecsDataFirebase implements FecsData {
           .collection(table)
           .where(criteria, isEqualTo: true)
           .get();
-      return {table: value};
+      final data = <String, dynamic>{};
+      data['data'] = value;
+      data['status'] = true;
+      return data;
     } catch (e) {
-      rethrow;
+      return {
+        'status': false,
+        'error': e.toString(),
+      };
     }
   }
 
@@ -197,14 +233,20 @@ class FecsDataFirebase implements FecsData {
           .collection(table)
           .where(criteria, isEqualTo: true)
           .get();
-      return {table: values};
+      final data = <String, dynamic>{};
+      data['data'] = values;
+      data['status'] = true;
+      return data;
     } catch (e) {
-      rethrow;
+      return {
+        'status': false,
+        'error': e.toString(),
+      };
     }
   }
 
   @override
-  Future<Map<String, dynamic>> signupWithEmailGoogle() async {
+  Future<Map<String, dynamic>> signinWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
 
     final GoogleSignInAccount? googleSignInAccount =
@@ -222,7 +264,9 @@ class FecsDataFirebase implements FecsData {
         final User userDetails =
             (await _auth.signInWithCredential(credential)).user!;
         // return userDetails as Map<String, dynamic>;
-        return {
+        final data = <String, dynamic>{};
+        data['status'] = true;
+        data['data'] = {
           'id': 1,
           'number': userDetails.uid,
           'name': userDetails.displayName,
@@ -231,26 +275,37 @@ class FecsDataFirebase implements FecsData {
           'type':
               2, // 1 for phone, 2 for google, 3 for facebook, 0 for anoymous
         };
+        return data;
       } on FirebaseAuthException catch (e) {
         switch (e.code) {
           case "account-exists-with-different-credential":
-            throw Exception(
-              "You already have an account with us. Use correct provider",
-            );
-
+            return {
+              'status': false,
+              'error':
+                  "You already have an account with us. Use correct provider",
+            };
           case "null":
-            throw Exception("Some unexpected error while trying to sign in");
+            return {
+              'status': false,
+              'error': "Something went wrong. Please try again later",
+            };
           default:
-            throw Exception(e.toString());
+            return {
+              'status': false,
+              'error': e.toString(),
+            };
         }
       }
     } else {
-      throw Exception('Sign up with google failed');
+      return {
+        'status': false,
+        'error': "Sign up with google failed",
+      };
     }
   }
 
   @override
-  Future<void> signupWithPhone(String phoneNumber,
+  Future<void> signinWithPhone(String phoneNumber,
       {required Future<String> Function() onCodeSent,
       required void Function(Map<String, dynamic> user) onVerificationCompleted,
       required void Function(Exception exception) onVerificationFailed,
