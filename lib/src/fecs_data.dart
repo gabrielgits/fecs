@@ -19,6 +19,7 @@ abstract class FecsData {
   //--crud--//
   Future<String> delete({required String id, required String table});
   Future<Map<String, dynamic>> get({required String id, required String table});
+  Future<Map<String, dynamic>> getAll(String table);
   Future<Map<String, dynamic>> post(
       {required String table, required Map<String, dynamic> body});
   Future<Map<String, dynamic>> put(

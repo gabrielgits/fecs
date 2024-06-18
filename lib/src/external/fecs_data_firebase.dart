@@ -168,6 +168,22 @@ class FecsDataFirebase implements FecsData {
   }
 
   @override
+  Future<Map<String, dynamic>> getAll(String table) async {
+    try {
+      final value = await _firestore.collection(table).get();
+      final data = <String, dynamic>{};
+      data['data'] = value;
+      data['status'] = true;
+      return data;
+    } catch (e) {
+      return {
+        'status': false,
+        'error': e.toString(),
+      };
+    }
+  }
+
+  @override
   Future<Map<String, dynamic>> post(
       {required String table, required Map<String, dynamic> body}) async {
     try {
