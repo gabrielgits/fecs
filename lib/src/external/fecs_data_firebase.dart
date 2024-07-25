@@ -270,7 +270,7 @@ class FecsDataFirebase implements FecsData {
               whereNotIn: whereNotIn)
           .get();
       final data = <String, dynamic>{};
-      data['data'] = values;
+      data['data'] = values.docs.map((e) => e.data()).toList();
       data['status'] = true;
       return data;
     } catch (e) {
