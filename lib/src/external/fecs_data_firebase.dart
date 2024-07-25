@@ -240,14 +240,34 @@ class FecsDataFirebase implements FecsData {
   }
 
   @override
-  Future<Map<String, dynamic>> searchAll(
-      {required String table,
-      required String criteria,
-      List<Object?>? criteriaListData}) async {
+  Future<Map<String, dynamic>> searchAll({
+    required Object field,
+    required String table,
+    Object? isEqualTo,
+    Object? isNotEqualTo,
+    Object? isLessThan,
+    Object? isLessThanOrEqualTo,
+    Object? isGreaterThan,
+    Object? isGreaterThanOrEqualTo,
+    Object? arrayContains,
+    Iterable<Object?>? arrayContainsAny,
+    Iterable<Object?>? whereIn,
+    Iterable<Object?>? whereNotIn,
+  }) async {
     try {
       final values = await _firestore
           .collection(table)
-          .where(criteria, isEqualTo: true)
+          .where(field,
+              isEqualTo: isEqualTo,
+              isNotEqualTo: isNotEqualTo,
+              isLessThan: isLessThan,
+              isLessThanOrEqualTo: isLessThanOrEqualTo,
+              isGreaterThan: isGreaterThan,
+              isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
+              arrayContains: arrayContains,
+              arrayContainsAny: arrayContainsAny,
+              whereIn: whereIn,
+              whereNotIn: whereNotIn)
           .get();
       final data = <String, dynamic>{};
       data['data'] = values;
