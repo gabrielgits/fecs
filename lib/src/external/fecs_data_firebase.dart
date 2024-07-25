@@ -172,7 +172,7 @@ class FecsDataFirebase implements FecsData {
     try {
       final value = await _firestore.collection(table).get();
       final data = <String, dynamic>{};
-      data['data'] = value;
+      data['data'] = value.docs;
       data['status'] = true;
       return data;
     } catch (e) {
