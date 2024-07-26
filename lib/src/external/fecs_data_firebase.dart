@@ -74,7 +74,9 @@ class FecsDataFirebase implements FecsData {
   @override
   Future<bool> logout() async {
     try {
-      await _auth.signOut();
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      googleSignIn.signOut();
+      await _auth.signOut(); 
       return true;
     } catch (e) {
       rethrow;
