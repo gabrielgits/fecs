@@ -44,4 +44,19 @@ abstract class FecsData {
     required String table,
     required String criteria,
   });
+
+  searchAllQuery({
+    required Object field,
+    required String table,
+    Object? isEqualTo,
+    Object? isNotEqualTo,
+    Object? isLessThan,
+    Object? isLessThanOrEqualTo,
+    Object? isGreaterThan,
+    Object? isGreaterThanOrEqualTo,
+    Object? arrayContains,
+    Iterable<Object?>? arrayContainsAny,
+    Iterable<Object?>? whereIn,
+    Iterable<Object?>? whereNotIn,
+  });
 }

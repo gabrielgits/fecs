@@ -76,7 +76,7 @@ class FecsDataFirebase implements FecsData {
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn();
       googleSignIn.signOut();
-      await _auth.signOut(); 
+      await _auth.signOut();
       return true;
     } catch (e) {
       rethrow;
@@ -159,6 +159,7 @@ class FecsDataFirebase implements FecsData {
       final value = await _firestore.collection(table).doc(id).get();
       final data = <String, dynamic>{};
       data['data'] = value.data();
+      data['data']['id'] = value.id;
       data['status'] = true;
       return data;
     } catch (e) {
@@ -174,7 +175,11 @@ class FecsDataFirebase implements FecsData {
     try {
       final value = await _firestore.collection(table).get();
       final data = <String, dynamic>{};
-      data['data'] = value.docs.map((e) => e.data()).toList();
+      data['data'] = value.docs.map((e) {
+        final value = e.data();
+        value['id'] = e.id;
+        return value;
+      }).toList();
       data['status'] = true;
       return data;
     } catch (e) {
@@ -208,7 +213,10 @@ class FecsDataFirebase implements FecsData {
       required String table,
       required Map<String, dynamic> body}) async {
     try {
-      await _firestore.collection(table).doc(id).update(body);
+      await _firestore
+          .collection(table)
+          .doc(id)
+          .set(body, SetOptions(merge: true));
       final data = <String, dynamic>{};
       data['data'] = body;
       data['status'] = true;
@@ -272,7 +280,11 @@ class FecsDataFirebase implements FecsData {
               whereNotIn: whereNotIn)
           .get();
       final data = <String, dynamic>{};
-      data['data'] = values.docs.map((e) => e.data()).toList();
+      data['data'] = values.docs.map((e) {
+        final value = e.data();
+        value['id'] = e.id;
+        return value;
+      }).toList();
       data['status'] = true;
       return data;
     } catch (e) {
@@ -281,6 +293,35 @@ class FecsDataFirebase implements FecsData {
         'error': e.toString(),
       };
     }
+  }
+
+  @override
+  Query<Map<String, dynamic>> searchAllQuery({
+    required Object field,
+    required String table,
+    Object? isEqualTo,
+    Object? isNotEqualTo,
+    Object? isLessThan,
+    Object? isLessThanOrEqualTo,
+    Object? isGreaterThan,
+    Object? isGreaterThanOrEqualTo,
+    Object? arrayContains,
+    Iterable<Object?>? arrayContainsAny,
+    Iterable<Object?>? whereIn,
+    Iterable<Object?>? whereNotIn,
+  }) {
+    final values = _firestore.collection(table).where(field,
+        isEqualTo: isEqualTo,
+        isNotEqualTo: isNotEqualTo,
+        isLessThan: isLessThan,
+        isLessThanOrEqualTo: isLessThanOrEqualTo,
+        isGreaterThan: isGreaterThan,
+        isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
+        arrayContains: arrayContains,
+        arrayContainsAny: arrayContainsAny,
+        whereIn: whereIn,
+        whereNotIn: whereNotIn);
+    return values;
   }
 
   @override
@@ -305,7 +346,7 @@ class FecsDataFirebase implements FecsData {
         final data = <String, dynamic>{};
         data['status'] = true;
         data['data'] = {
-          'id': 1,
+          'id': userDetails.uid,
           'number': userDetails.uid,
           'name': userDetails.displayName,
           'email': userDetails.email,
@@ -364,7 +405,7 @@ class FecsDataFirebase implements FecsData {
         final User userDetails =
             (await _auth.signInWithCredential(credential)).user!;
         final userMap = {
-          'id': 1,
+          'id': userDetails.uid,
           'number': userDetails.uid,
           'name': userDetails.displayName,
           'email': userDetails.email,
